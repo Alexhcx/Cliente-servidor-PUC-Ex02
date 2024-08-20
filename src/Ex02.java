@@ -54,9 +54,15 @@ public class Ex02 {
     private String sexoText;
     private String estadoCivilText;
 
+    private boolean nomeValido = false;
+    private boolean cpfValido = false;
+    private boolean dataValida = false;
+
     public Ex02(){
 
-        final String[] estadoCivil = {"","Solteiro", "Casado"};
+        bSubmit.setEnabled(false);
+
+        final String[] estadoCivil = {"","Solteiro(a)", "Casado(a)"};
         estadoCivilBox.setModel(new DefaultComboBoxModel<>(estadoCivil));
 
         try {
@@ -71,16 +77,19 @@ public class Ex02 {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 verificarNome();
+                verificarCampos();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 verificarNome();
+                verificarCampos();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
                 verificarNome();
+                verificarCampos();
             }
 
             private void verificarNome() {
@@ -89,7 +98,10 @@ public class Ex02 {
                 if(nomeText.isEmpty()){
                     nomeEmBranco.setVisible(true);
                     nomeEmBranco.setText("Nome não pode estar em branco");
-                } else { nomeEmBranco.setVisible(false);}
+                    nomeValido = false;
+                } else {
+                    nomeEmBranco.setVisible(false);
+                    nomeValido = true;}
             }
         });
 
@@ -97,16 +109,19 @@ public class Ex02 {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 verificarCPF();
+                verificarCampos();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 verificarCPF();
+                verificarCampos();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
                 verificarCPF();
+                verificarCampos();
             }
 
             private void verificarCPF() {
@@ -115,9 +130,11 @@ public class Ex02 {
                 if(isValidCPF(cpfText)){
                     validCPFLabel.setVisible(true);
                     validCPFLabel.setText("CPF é válido");
+                    cpfValido = true;
                 } else {
                     validCPFLabel.setVisible(true);
                     validCPFLabel.setText("CPF é inválido");
+                    cpfValido = false;
                 }
             }
         });
@@ -147,16 +164,19 @@ public class Ex02 {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 verificarData();
+                verificarCampos();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 verificarData();
+                verificarCampos();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
                 verificarData();
+                verificarCampos();
             }
 
             private void verificarData() {
@@ -170,7 +190,11 @@ public class Ex02 {
                     if (dia < 1 || dia > 31 || mes < 1 || mes > 12 || ano < 1900 || ano > LocalDate.now().getYear()) {
                         validacaoData.setVisible(true);
                         validacaoData.setText("Data inválida");
-                    } else{validacaoData.setVisible(false);}
+                        dataValida = false;
+                    } else{
+                        validacaoData.setVisible(false);
+                        dataValida = true;
+                    }
                 }
             }
         });
@@ -210,8 +234,30 @@ public class Ex02 {
                     profissaoSubmit.setText(profissao.getText());
                 }
                 else{ profissaoSubmit.setText(profissao.getText());}
+
+                nome.setText("");
+                cpf.setText("");
+                dataNascimento.setText("");
+                profissao.setText("");
+                estadoCivilBox.setSelectedIndex(0);
+                bSexoMasculino.setSelected(false);
+                bSexoFeminino.setSelected(false);
+                validacaoData.setVisible(false);
+                nomeEmBranco.setVisible(false);
+                validCPFLabel.setVisible(false);
+
+                nomeText = "";
+                cpfText = "";
+                sexoText = "";
+                estadoCivilText = "";
+
+                bSubmit.setEnabled(false);
             }
         });
+    }
+
+    private void verificarCampos() {
+        bSubmit.setEnabled(nomeValido && cpfValido && dataValida);
     }
 
     public static boolean isValidCPF(String cpf) {
